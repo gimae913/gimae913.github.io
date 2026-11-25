@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Light Studies — Photo Portfolio</title>
+
+  <style>
+    :root {
+      --paper: #f4f3ed;
+      --ink: #292d28;
+      --muted: #74766f;
+      --line: #d9d8ce;
+      --green: #294c3c;
+      --green-light: #e2e9e2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    button {
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .page {
+      width: min(1100px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 24px 0 18px;
+      border-bottom: 1px solid var(--line);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .topbar span {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    .intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      padding: 54px 0 28px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1,
+    h2,
+    .photo-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: clamp(42px, 8vw, 76px);
+      letter-spacing: -3px;
+    }
+
+    .intro p,
+    .detail-description {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .sort-controls {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .sort-button,
+    .edit-button {
+      border: 1px solid #bfc1b8;
+      border-radius: 999px;
+      padding: 9px 15px;
+      background: transparent;
+      font-size: 12px;
+    }
+
+    .sort-button.active,
+    .edit-button.active {
+      border-color: var(--green);
+      color: white;
+      background: var(--green);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+      padding: 8px 0 50px;
+    }
+
+    .photo-card {
+      min-width: 0;
+    }
+
+    .photo-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      background: var(--green-light);
+    }
+
+    .card-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      padding: 10px 0 5px;
+    }
+
+    .photo-title {
+      margin: 0;
+      font-size: 27px;
+    }
+
+    .photo-date {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .view-button {
+      margin-top: 10px;
+      padding: 0;
+      border: 0;
+      color: var(--green);
+      background: none;
+      font-size: 12px;
+      text-decoration: underline;
+    }
+
+    .footer {
+      padding: 17px 0 30px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .detail-page {
+      padding-bottom: 50px;
+    }
+
+    .back-button {
+      margin: 22px 0;
+      padding: 0;
+      border: 0;
+      color: var(--green);
+      background: none;
+      font-size: 14px;
+    }
+
+    .detail-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .detail-heading h2 {
+      margin-bottom: 4px;
+      font-size: clamp(38px, 7vw, 58px);
+    }
+
+    .photo-stage {
+      display: grid;
+      min-height: 300px;
+      place-items: center;
+      padding: 14px;
+      background: #e9e8e0;
+    }
+
+    .photo-stage img {
+      display: block;
+      width: 100%;
+      max-height: 66vh;
+      object-fit: contain;
+      transition: filter 180ms ease;
+    }
+
+    .photo-stage.after img {
+      filter: grayscale(100%) contrast(1.25);
+    }
+
+    .detail-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-top: 14px;
+    }
+
+    .edit-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 700px) {
+      .intro {
+        align-items: start;
+        flex-direction: column;
+        padding-top: 38px;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .photo-card img {
+        aspect-ratio: 4 / 3;
+      }
+
+      .detail-heading,
+      .detail-bottom {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .topbar {
+        font-size: 10px;
+        letter-spacing: 1px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div>◎ LIGHT STUDIES</div>
+      <span>A PHOTO-EDITING PORTFOLIO</span>
+    </header>
+
+    <main>
+      <section id="galleryPage">
+        <div class="intro">
+          <div>
+            <h1>Light Studies</h1>
+            <p>Three photographs, before and after the edit.</p>
+          </div>
+
+          <div class="sort-controls" aria-label="Sort photos">
+            <button id="newestButton" class="sort-button active" type="button">
+              Newest
+            </button>
+            <button id="titleButton" class="sort-button" type="button">
+              Title A–Z
+            </button>
+          </div>
+        </div>
+
+        <div id="gallery" class="gallery"></div>
+
+        <footer class="footer">
+          Select “View edit” on a photograph to compare its original and edited versions.
+        </footer>
+      </section>
+
+      <section id="detailPage" class="detail-page" hidden>
+        <button id="backButton" class="back-button" type="button">
+          ← Gallery
+        </button>
+
+        <div class="detail-heading">
+          <div>
+            <h2 id="detailTitle"></h2>
+            <p id="detailDescription" class="detail-description"></p>
+          </div>
+        </div>
+
+        <div id="photoStage" class="photo-stage">
+          <img id="detailPhoto" src="" alt="">
+        </div>
+
+        <div class="detail-bottom">
+          <span id="editLabel">Before · Original color</span>
+          <div class="edit-controls">
+            <button id="beforeButton" class="edit-button active" type="button">
+              Before
+            </button>
+            <button id="afterButton" class="edit-button" type="button">
+              After
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const photos = [
+      {
+        title: "Alley",
+        date: "Oct 12",
+        dateOrder: 20261012,
+        image: "assets/alley.jpg"
+      },
+      {
+        title: "Beach",
+        date: "Aug 20",
+        dateOrder: 20260820,
+        image: "assets/beach.jpg"
+      },
+      {
+        title: "Night",
+        date: "Sep 03",
+        dateOrder: 20260903,
+        image: "assets/night.jpg"
+      }
+    ];
+
+    const galleryElement = document.querySelector("#gallery");
+    const galleryPage = document.querySelector("#galleryPage");
+    const detailPage = document.querySelector("#detailPage");
+    const newestButton = document.querySelector("#newestButton");
+    const titleButton = document.querySelector("#titleButton");
+
+    // Recursively divide the list, sort each half, and merge the halves.
+    function mergeSort(rows, compare) {
+      if (rows.length <= 1) {
+        return rows;
+      }
+
+      const middle = Math.floor(rows.length / 2);
+      const left = mergeSort(rows.slice(0, middle), compare);
+      const right = mergeSort(rows.slice(middle), compare);
+
+      return merge(left, right, compare);
+    }
+
+    function merge(left, right, compare) {
+      const result = [];
+      let leftIndex = 0;
+      let rightIndex = 0;
+
+      while (leftIndex < left.length && rightIndex < right.length) {
+        if (compare(left[leftIndex], right[rightIndex]) <= 0) {
+          result.push(left[leftIndex]);
+          leftIndex++;
+        } else {
+          result.push(right[rightIndex]);
+          rightIndex++;
+        }
+      }
+
+      return result
+        .concat(left.slice(leftIndex))
+        .concat(right.slice(rightIndex));
+    }
+
+    function gallery(sortType) {
+      const compare = sortType === "title"
+        ? (a, b) => a.title.localeCompare(b.title)
+        : (a, b) => b.dateOrder - a.dateOrder;
+
+      // Both sort buttons use mergeSort to reorder the photo records.
+      const orderedPhotos = mergeSort(photos, compare);
+
+      newestButton.classList.toggle("active", sortType === "newest");
+      titleButton.classList.toggle("active", sortType === "title");
+
+      galleryElement.innerHTML = orderedPhotos.map((photo, index) => `
+        <article class="photo-card">
+          <img src="${photo.image}" alt="${photo.title} photograph">
+          <div class="card-info">
+            <h2 class="photo-title">${photo.title}</h2>
+            <span class="photo-date">${photo.date}</span>
+          </div>
+          <button class="view-button" type="button" data-index="${index}">
+            View edit →
+          </button>
+        </article>
+      `).join("");
+
+      document.querySelectorAll(".view-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const photo = orderedPhotos[Number(button.dataset.index)];
+          openDetail(photo);
+        });
+      });
+    }
+
+    function openDetail(photo) {
+      galleryPage.hidden = true;
+      detailPage.hidden = false;
+
+      document.querySelector("#detailTitle").textContent = photo.title;
+      document.querySelector("#detailDescription").textContent =
+        `${photo.date} / Photo study`;
+      document.querySelector("#detailPhoto").src = photo.image;
+      document.querySelector("#detailPhoto").alt =
+        `${photo.title}, before and after edit`;
+
+      setEdit("before");
+      window.scrollTo(0, 0);
+    }
+
+    function setEdit(version) {
+      const isAfter = version === "after";
+
+      document.querySelector("#photoStage").classList.toggle("after", isAfter);
+      document.querySelector("#editLabel").textContent = isAfter
+        ? "After · High-contrast monochrome"
+        : "Before · Original color";
+
+      document.querySelector("#beforeButton")
+        .classList.toggle("active", !isAfter);
+      document.querySelector("#afterButton")
+        .classList.toggle("active", isAfter);
+    }
+
+    newestButton.addEventListener("click", () => gallery("newest"));
+    titleButton.addEventListener("click", () => gallery("title"));
+
+    document.querySelector("#beforeButton").addEventListener("click", () => {
+      setEdit("before");
+    });
+
+    document.querySelector("#afterButton").addEventListener("click", () => {
+      setEdit("after");
+    });
+
+    document.querySelector("#backButton").addEventListener("click", () => {
+      detailPage.hidden = true;
+      galleryPage.hidden = false;
+      window.scrollTo(0, 0);
+    });
+
+    gallery("newest");
+  </script>
+</body>
+</html>
